@@ -249,14 +249,13 @@ export class SelectComponent implements OnInit {
       this._items = this.itemObjects = [];
     } else {
       this._items = value.filter((item:any) => {
-        // if ((typeof item === 'string' && item) || (typeof item === 'object' && item && item.text && item.id)) {
         if ((typeof item === 'string') || (typeof item === 'object' && item.text)) {
           return item;
         }
       });
-      // this.itemObjects = this._items.map((item:any) => (typeof item === 'string' ? new SelectItem(item) : new SelectItem({id: item[this.idField], text: item[this.textField]})));
       this.itemObjects = this._items.map((item:any) => new SelectItem(item));
-    }
+      }
+      this.options = this.itemObjects;
   }
 
   @Input()
@@ -388,8 +387,12 @@ export class SelectComponent implements OnInit {
       return;
     }
     let target = e.target || e.srcElement;
-    if (target && target.value) {
-      this.inputValue = target.value;
+    if (target) {
+
+        this.inputValue = !isUpMode && e.keyCode === 8
+            ? target.value.slice(0, target.value.length - 1)
+            : target.value;
+
       this.behavior.filter(new RegExp(escapeRegexp(this.inputValue), 'ig'));
       this.doEvent('typed', this.inputValue);
     }
@@ -418,7 +421,7 @@ export class SelectComponent implements OnInit {
   }
 
   public doEvent(type:string, value:any):void {
-    if ((this as any)[type] && value) {
+    if ((this as any)[type]) {
       (this as any)[type].next(value);
     }
   }
