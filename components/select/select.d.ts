@@ -1,14 +1,23 @@
 import { EventEmitter, ElementRef, OnInit } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { Http, Response } from '@angular/http/index';
 import { SelectItem } from './select-item';
 import { OptionsBehavior } from './select-interfaces';
 export declare class SelectComponent implements OnInit {
     private sanitizer;
+    private http;
     allowClear: boolean;
     placeholder: string;
     idField: string;
     textField: string;
     multiple: boolean;
+    fetchUrl: string;
+    responseMapper: (response: Response) => Array<string | {
+        id: any;
+        text: any;
+    }>;
+    fetchTimeoutHandle: number;
+    fetchTimeout: number;
     items: Array<any>;
     disabled: boolean;
     active: Array<any>;
@@ -16,6 +25,8 @@ export declare class SelectComponent implements OnInit {
     selected: EventEmitter<any>;
     removed: EventEmitter<any>;
     typed: EventEmitter<any>;
+    fetched: EventEmitter<any>;
+    fetchedError: EventEmitter<any>;
     options: Array<SelectItem>;
     itemObjects: Array<SelectItem>;
     activeOption: SelectItem;
@@ -27,7 +38,7 @@ export declare class SelectComponent implements OnInit {
     private _items;
     private _disabled;
     private _active;
-    constructor(element: ElementRef, sanitizer: DomSanitizer);
+    constructor(element: ElementRef, sanitizer: DomSanitizer, http: Http);
     sanitize(html: string): SafeHtml;
     inputEvent(e: any, isUpMode?: boolean): void;
     ngOnInit(): any;
@@ -44,6 +55,7 @@ export declare class SelectComponent implements OnInit {
     private hideOptions();
     private selectActiveMatch();
     private selectMatch(value, e?);
+    private fetchItems();
 }
 export declare class Behavior {
     optionsMap: Map<string, number>;

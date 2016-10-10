@@ -6,22 +6,27 @@ var __extends = (this && this.__extends) || function (d, b) {
 };
 var core_1 = require('@angular/core');
 var platform_browser_1 = require('@angular/platform-browser');
+var index_1 = require('@angular/http/index');
 var select_item_1 = require('./select-item');
 var select_pipes_1 = require('./select-pipes');
 var common_1 = require('./common');
 var styles = "\n  .ui-select-toggle {\n    position: relative;\n  }\n  \n  /* Fix Bootstrap dropdown position when inside a input-group */\n  .input-group > .dropdown {\n    /* Instead of relative */\n    position: static;\n  }\n  \n  .ui-select-match > .btn {\n    /* Instead of center because of .btn */\n    text-align: left !important;\n  }\n  \n  .ui-select-match > .caret {\n    position: absolute;\n    top: 45%;\n    right: 15px;\n  }\n  \n  .ui-disabled {\n    background-color: #eceeef;\n    border-radius: 4px;\n    position: absolute;\n    width: 100%;\n    height: 100%;\n    z-index: 5;\n    opacity: 0.6;\n    top: 0;\n    left: 0;\n    cursor: not-allowed;\n  }\n  \n  .ui-select-choices {\n    width: 100%;\n    height: auto;\n    max-height: 200px;\n    overflow-x: hidden;\n    margin-top: 0;\n  }\n  \n  .ui-select-multiple .ui-select-choices {\n    margin-top: 1px;\n  }\n  .ui-select-choices-row>a {\n      display: block;\n      padding: 3px 20px;\n      clear: both;\n      font-weight: 400;\n      line-height: 1.42857143;\n      color: #333;\n      white-space: nowrap;\n  }\n  .ui-select-choices-row.active>a {\n      color: #fff;\n      text-decoration: none;\n      outline: 0;\n      background-color: #428bca;\n  }\n  \n  .ui-select-multiple {\n    height: auto;\n    padding:3px 3px 0 3px;\n  }\n  \n  .ui-select-multiple input.ui-select-search {\n    background-color: transparent !important; /* To prevent double background when disabled */\n    border: none;\n    outline: none;\n    box-shadow: none;\n    height: 1.6666em;\n    padding: 0;\n    margin-bottom: 3px;\n    \n  }\n  .ui-select-match .close {\n      font-size: 1.6em;\n      line-height: 0.75;\n  }\n  \n  .ui-select-multiple .ui-select-match-item {\n    outline: 0;\n    margin: 0 3px 3px 0;\n  }\n  .ui-select-toggle > .caret {\n      position: absolute;\n      height: 10px;\n      top: 50%;\n      right: 10px;\n      margin-top: -2px;\n  }\n";
 var SelectComponent = (function () {
-    function SelectComponent(element, sanitizer) {
+    function SelectComponent(element, sanitizer, http) {
         this.sanitizer = sanitizer;
+        this.http = http;
         this.allowClear = false;
         this.placeholder = '';
         this.idField = 'id';
         this.textField = 'text';
         this.multiple = false;
+        this.fetchTimeout = 50;
         this.data = new core_1.EventEmitter();
         this.selected = new core_1.EventEmitter();
         this.removed = new core_1.EventEmitter();
         this.typed = new core_1.EventEmitter();
+        this.fetched = new core_1.EventEmitter();
+        this.fetchedError = new core_1.EventEmitter();
         this.options = [];
         this.itemObjects = [];
         this.inputMode = false;
@@ -90,6 +95,7 @@ var SelectComponent = (function () {
         return this.sanitizer.bypassSecurityTrustHtml(html);
     };
     SelectComponent.prototype.inputEvent = function (e, isUpMode) {
+        var _this = this;
         if (isUpMode === void 0) { isUpMode = false; }
         // tab
         if (e.keyCode === 9) {
@@ -165,6 +171,14 @@ var SelectComponent = (function () {
                 : target.value;
             this.behavior.filter(new RegExp(common_1.escapeRegexp(this.inputValue), 'ig'));
             this.doEvent('typed', this.inputValue);
+            if (this.fetchUrl) {
+                if (this.fetchTimeoutHandle) {
+                    window.clearTimeout(this.fetchTimeoutHandle);
+                }
+                this.fetchTimeoutHandle = window.setTimeout(function () {
+                    _this.fetchItems();
+                }, this.fetchTimeout);
+            }
         }
     };
     SelectComponent.prototype.ngOnInit = function () {
@@ -303,9 +317,28 @@ var SelectComponent = (function () {
             this.element.nativeElement.querySelector('.ui-select-container').focus();
         }
     };
+    SelectComponent.prototype.fetchItems = function () {
+        var _this = this;
+        var fetchUrl = this.fetchUrl.replace(/\:inputValue/g, this.inputValue);
+        this.http.get(fetchUrl).subscribe(function (response) {
+            try {
+                _this.items = typeof _this.responseMapper === 'function'
+                    ? _this.responseMapper(response)
+                    : response.json();
+            }
+            catch (error) {
+                _this.doEvent('fetchedError', error);
+                return;
+            }
+            _this.doEvent('fetched', _this.items);
+        }, function (error) {
+            _this.doEvent('fetchedError', error);
+        });
+    };
     SelectComponent.decorators = [
         { type: core_1.Component, args: [{
                     selector: 'ng-select',
+                    providers: [index_1.Http],
                     styles: [styles],
                     template: "\n  <div tabindex=\"0\"\n     *ngIf=\"multiple === false\"\n     (keyup)=\"mainClick($event)\"\n     [offClick]=\"clickedOutside\"\n     class=\"ui-select-container dropdown open\">\n    <div [ngClass]=\"{'ui-disabled': disabled}\"></div>\n    <div class=\"ui-select-match\"\n         *ngIf=\"!inputMode\">\n      <span tabindex=\"-1\"\n          class=\"btn btn-default btn-secondary form-control ui-select-toggle\"\n          (click)=\"matchClick($event)\"\n          style=\"outline: 0;\">\n        <span *ngIf=\"active.length <= 0\" class=\"ui-select-placeholder text-muted\">{{placeholder}}</span>\n        <span *ngIf=\"active.length > 0\" class=\"ui-select-match-text pull-left\"\n              [ngClass]=\"{'ui-select-allow-clear': allowClear && active.length > 0}\"\n              [innerHTML]=\"sanitize(active[0].text)\"></span>\n        <i class=\"dropdown-toggle pull-right\"></i>\n        <i class=\"caret pull-right\"></i>\n        <a *ngIf=\"allowClear && active.length>0\" class=\"btn btn-xs btn-link pull-right\" style=\"margin-right: 10px; padding: 0;\" (click)=\"remove(activeOption)\">\n           <i class=\"glyphicon glyphicon-remove\"></i>\n        </a>\n      </span>\n    </div>\n    <input type=\"text\" autocomplete=\"false\" tabindex=\"-1\"\n           (keydown)=\"inputEvent($event)\"\n           (keyup)=\"inputEvent($event, true)\"\n           [disabled]=\"disabled\"\n           class=\"form-control ui-select-search\"\n           *ngIf=\"inputMode\"\n           placeholder=\"{{active.length <= 0 ? placeholder : ''}}\">\n     <!-- options template -->\n     <ul *ngIf=\"optionsOpened && options && options.length > 0 && !firstItemHasChildren\"\n          class=\"ui-select-choices dropdown-menu\" role=\"menu\">\n        <li *ngFor=\"let o of options\" role=\"menuitem\">\n          <div class=\"ui-select-choices-row\"\n               [class.active]=\"isActive(o)\"\n               (mouseenter)=\"selectActive(o)\"\n               (click)=\"selectMatch(o, $event)\">\n            <a href=\"javascript:void(0)\" class=\"dropdown-item\">\n              <div [innerHtml]=\"sanitize(o.text | highlight:inputValue)\"></div>\n            </a>\n          </div>\n        </li>\n      </ul>\n  \n      <ul *ngIf=\"optionsOpened && options && options.length > 0 && firstItemHasChildren\"\n          class=\"ui-select-choices dropdown-menu\" role=\"menu\">\n        <li *ngFor=\"let c of options; let index=index\" role=\"menuitem\">\n          <div class=\"divider dropdown-divider\" *ngIf=\"index > 0\"></div>\n          <div class=\"dropdown-header\">{{c.text}}</div>\n  \n          <div *ngFor=\"let o of c.children\"\n               class=\"ui-select-choices-row\"\n               [class.active]=\"isActive(o)\"\n               (mouseenter)=\"selectActive(o)\"\n               (click)=\"selectMatch(o, $event)\"\n               [ngClass]=\"{'active': isActive(o)}\">\n            <a href=\"javascript:void(0)\" class=\"dropdown-item\">\n              <div [innerHtml]=\"sanitize(o.text | highlight:inputValue)\"></div>\n            </a>\n          </div>\n        </li>\n      </ul>\n  </div>\n\n  <div tabindex=\"0\"\n     *ngIf=\"multiple === true\"\n     (keyup)=\"mainClick($event)\"\n     (focus)=\"focusToInput('')\"\n     class=\"ui-select-container ui-select-multiple dropdown form-control open\">\n    <div [ngClass]=\"{'ui-disabled': disabled}\"></div>\n    <span class=\"ui-select-match\">\n        <span *ngFor=\"let a of active\">\n            <span class=\"ui-select-match-item btn btn-default btn-secondary btn-xs\"\n                  tabindex=\"-1\"\n                  type=\"button\"\n                  [ngClass]=\"{'btn-default': true}\">\n               <a class=\"close\"\n                  style=\"margin-left: 5px; padding: 0;\"\n                  (click)=\"remove(a)\">&times;</a>\n               <span>{{a.text}}</span>\n           </span>\n        </span>\n    </span>\n    <input type=\"text\"\n           (keydown)=\"inputEvent($event)\"\n           (keyup)=\"inputEvent($event, true)\"\n           (click)=\"matchClick($event)\"\n           [disabled]=\"disabled\"\n           autocomplete=\"false\"\n           autocorrect=\"off\"\n           autocapitalize=\"off\"\n           spellcheck=\"false\"\n           class=\"form-control ui-select-search\"\n           placeholder=\"{{active.length <= 0 ? placeholder : ''}}\"\n           role=\"combobox\">\n     <!-- options template -->\n     <ul *ngIf=\"optionsOpened && options && options.length > 0 && !firstItemHasChildren\"\n          class=\"ui-select-choices dropdown-menu\" role=\"menu\">\n        <li *ngFor=\"let o of options\" role=\"menuitem\">\n          <div class=\"ui-select-choices-row\"\n               [class.active]=\"isActive(o)\"\n               (mouseenter)=\"selectActive(o)\"\n               (click)=\"selectMatch(o, $event)\">\n            <a href=\"javascript:void(0)\" class=\"dropdown-item\">\n              <div [innerHtml]=\"sanitize(o.text | highlight:inputValue)\"></div>\n            </a>\n          </div>\n        </li>\n      </ul>\n  \n      <ul *ngIf=\"optionsOpened && options && options.length > 0 && firstItemHasChildren\"\n          class=\"ui-select-choices dropdown-menu\" role=\"menu\">\n        <li *ngFor=\"let c of options; let index=index\" role=\"menuitem\">\n          <div class=\"divider dropdown-divider\" *ngIf=\"index > 0\"></div>\n          <div class=\"dropdown-header\">{{c.text}}</div>\n  \n          <div *ngFor=\"let o of c.children\"\n               class=\"ui-select-choices-row\"\n               [class.active]=\"isActive(o)\"\n               (mouseenter)=\"selectActive(o)\"\n               (click)=\"selectMatch(o, $event)\"\n               [ngClass]=\"{'active': isActive(o)}\">\n            <a href=\"javascript:void(0)\" class=\"dropdown-item\">\n              <div [innerHtml]=\"sanitize(o.text | highlight:inputValue)\"></div>\n            </a>\n          </div>\n        </li>\n      </ul>\n  </div>\n  "
                 },] },
@@ -314,6 +347,7 @@ var SelectComponent = (function () {
     SelectComponent.ctorParameters = [
         { type: core_1.ElementRef, },
         { type: platform_browser_1.DomSanitizer, },
+        { type: index_1.Http, },
     ];
     SelectComponent.propDecorators = {
         'allowClear': [{ type: core_1.Input },],
@@ -321,6 +355,10 @@ var SelectComponent = (function () {
         'idField': [{ type: core_1.Input },],
         'textField': [{ type: core_1.Input },],
         'multiple': [{ type: core_1.Input },],
+        'fetchUrl': [{ type: core_1.Input },],
+        'responseMapper': [{ type: core_1.Input },],
+        'fetchTimeoutHandle': [{ type: core_1.Input },],
+        'fetchTimeout': [{ type: core_1.Input },],
         'items': [{ type: core_1.Input },],
         'disabled': [{ type: core_1.Input },],
         'active': [{ type: core_1.Input },],
@@ -328,6 +366,8 @@ var SelectComponent = (function () {
         'selected': [{ type: core_1.Output },],
         'removed': [{ type: core_1.Output },],
         'typed': [{ type: core_1.Output },],
+        'fetched': [{ type: core_1.Output },],
+        'fetchedError': [{ type: core_1.Output },],
     };
     return SelectComponent;
 }());
