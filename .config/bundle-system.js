@@ -45,7 +45,7 @@ function getSystemJsBundleConfig(cb) {
       '@angular/compiler': path.resolve('node_modules/@angular/compiler/index.js'),
       '@angular/platform-browser': path.resolve('node_modules/@angular/platform-browser/index.js'),
       '@angular/platform-browser-dynamic': path.resolve('node_modules/@angular/platform-browser-dynamic/'),
-      '@angular/http': path.resolve('node_modules/@angular/http/index.js'),
+      '@angular/http': path.resolve('node_modules/@angular/http/bundles/http.umd.js'),
       rxjs: path.resolve('node_modules/rxjs')
     },
     paths: {
