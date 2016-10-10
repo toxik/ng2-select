@@ -1,5 +1,6 @@
 import { Component, Input, Output, EventEmitter, ElementRef, OnInit } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { Http, Response } from '@angular/http'; 
 import { SelectItem } from './select-item';
 import { stripTags } from './select-pipes';
 import { OptionsBehavior } from './select-interfaces';
@@ -102,6 +103,7 @@ let styles = `
 
 @Component({
   selector: 'ng-select',
+  providers: [Http],
   styles: [styles],
   template: `
   <div tabindex="0"
@@ -242,6 +244,10 @@ export class SelectComponent implements OnInit {
   @Input() public idField:string = 'id';
   @Input() public textField:string = 'text';
   @Input() public multiple:boolean = false;
+  @Input() public fetchUrl:string;
+  @Input() public responseMapper: (response: Response) => Array<string | { id: any; text: any; }>;
+  @Input() public fetchTimeoutHandle: number;
+  @Input() public fetchTimeout: number = 50;
 
   @Input()
   public set items(value:Array<any>) {
@@ -291,6 +297,8 @@ export class SelectComponent implements OnInit {
   @Output() public selected:EventEmitter<any> = new EventEmitter();
   @Output() public removed:EventEmitter<any> = new EventEmitter();
   @Output() public typed:EventEmitter<any> = new EventEmitter();
+  @Output() public fetched:EventEmitter<any> = new EventEmitter();
+  @Output() public fetchedError:EventEmitter<any> = new EventEmitter();
 
   public options:Array<SelectItem> = [];
   public itemObjects:Array<SelectItem> = [];
@@ -309,7 +317,7 @@ export class SelectComponent implements OnInit {
   private _disabled:boolean = false;
   private _active:Array<SelectItem> = [];
 
-  public constructor(element:ElementRef, private sanitizer:DomSanitizer) {
+  public constructor(element:ElementRef, private sanitizer:DomSanitizer, private http:Http) {
     this.element = element;
     this.clickedOutside = this.clickedOutside.bind(this);
   }
@@ -395,6 +403,17 @@ export class SelectComponent implements OnInit {
 
       this.behavior.filter(new RegExp(escapeRegexp(this.inputValue), 'ig'));
       this.doEvent('typed', this.inputValue);
+
+      if (this.fetchUrl) {
+
+        if (this.fetchTimeoutHandle) {
+            window.clearTimeout(this.fetchTimeoutHandle);
+        }
+
+        this.fetchTimeoutHandle = window.setTimeout(() => {
+            this.fetchItems();
+        }, this.fetchTimeout);
+      }
     }
   }
 
@@ -538,6 +557,33 @@ export class SelectComponent implements OnInit {
       this.focusToInput(stripTags(value.text));
       this.element.nativeElement.querySelector('.ui-select-container').focus();
     }
+  }
+
+  private fetchItems(): any {
+
+    let fetchUrl = this.fetchUrl.replace(/\:inputValue/g, this.inputValue);
+
+    this.http.get(fetchUrl).subscribe(
+      (response: Response) => {
+
+        try {
+
+          this.items = typeof this.responseMapper === 'function'
+            ? this.responseMapper(response)
+            : response.json();
+
+        } catch(error) {
+
+          this.doEvent('fetchedError', error);
+
+          return;
+        }       
+
+        this.doEvent('fetched', this.items);
+      },
+      (error: any) => {
+        this.doEvent('fetchedError', error);
+      });
   }
 }
 
