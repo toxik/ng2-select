@@ -297,11 +297,13 @@ export class SelectComponent implements OnInit {
   @Input() public textField:string = 'text';
   @Input() public multiple:boolean = false;
   @Input() public fetchUrl:string;
-  @Input() public responseMapper:(response: Response) => Array<string | { id: any; text: any; }>;
-  @Input() public fetchTimeoutHandle:number;
+  @Input() public responseMapper:(response: Response) => Array<string | { id: any; text: any; }>; 
+  @Input() public fetchOnInit:boolean = true;
   @Input() public fetchTimeout:number = 50;
   @Input() public isLoading:boolean = false;
   @Input() public loadingText:string = 'Loading...';
+
+  private _fetchTimeoutHandle:number;
 
   @Input()
   public set items(value:Array<any>) {
@@ -460,11 +462,11 @@ export class SelectComponent implements OnInit {
       this.behavior.filter(new RegExp(escapeRegexp(this.inputValue), 'ig'));
       this.doEvent('typed', this.inputValue);
 
-      if (this.fetchTimeoutHandle) {
-          window.clearTimeout(this.fetchTimeoutHandle);
+      if (this._fetchTimeoutHandle) {
+          window.clearTimeout(this._fetchTimeoutHandle);
       }
 
-      this.fetchTimeoutHandle = window.setTimeout(() => {
+      this._fetchTimeoutHandle = window.setTimeout(() => {
           this.triggerFetch();
       }, this.fetchTimeout);    
     }
@@ -473,6 +475,10 @@ export class SelectComponent implements OnInit {
   public ngOnInit():any {
     this.behavior = (this.firstItemHasChildren) ?
       new ChildrenBehavior(this) : new GenericBehavior(this);
+
+    if(this.fetchOnInit) {
+      this.triggerFetch();
+    }
   }
 
   public remove(item:SelectItem):void {
@@ -615,11 +621,8 @@ export class SelectComponent implements OnInit {
   private triggerFetch(): any {
 
     if (this.fetchUrl) {
-
       this.fetchItemsFromUrl();
-
     } else {
-
       this.doEvent('fetching', {
         query: this.inputValue,
         items: this._items
@@ -635,24 +638,16 @@ export class SelectComponent implements OnInit {
 
     this.http.get(fetchUrl).subscribe(
       (response: Response) => {
-
         try {
-
           this.items = typeof this.responseMapper === 'function'
             ? this.responseMapper(response)
             : response.json();
-
         } catch(error) {
-
           this.doEvent('fetchedError', error);
-
           this.isLoading = false;
-
           return;
         }
-
         this.doEvent('fetched', this._items);
-
         this.isLoading = false;
       },
       (error: any) => {
