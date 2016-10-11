@@ -1,6 +1,6 @@
 import { Component, Input, Output, EventEmitter, ElementRef, OnInit } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
-import { Http, Response } from '@angular/http/index'; 
+import { Http, Response } from '@angular/http'; 
 import { SelectItem } from './select-item';
 import { stripTags } from './select-pipes';
 import { OptionsBehavior } from './select-interfaces';
@@ -103,7 +103,6 @@ let styles = `
 
 @Component({
   selector: 'ng-select',
-  providers: [Http],
   styles: [styles],
   template: `
   <div tabindex="0"

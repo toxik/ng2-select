@@ -3,6 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { CommonModule } from '@angular/common';
 import { TabsModule, ButtonsModule } from 'ng2-bootstrap/ng2-bootstrap';
+import { HttpModule } from '@angular/http';
 
 import { SelectModule } from '../components/select.module';
 import { DemoComponent } from './demo.component';
@@ -27,7 +28,8 @@ import { SingleDemoComponent } from './components/select/single-demo';
     SelectModule,
     TabsModule,
     ButtonsModule,
-    CommonModule
+    CommonModule,
+    HttpModule
   ],
   bootstrap: [DemoComponent]
 })

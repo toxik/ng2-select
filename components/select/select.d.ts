@@ -1,6 +1,6 @@
 import { EventEmitter, ElementRef, OnInit } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
-import { Http, Response } from '@angular/http/index';
+import { Http, Response } from '@angular/http';
 import { SelectItem } from './select-item';
 import { OptionsBehavior } from './select-interfaces';
 export declare class SelectComponent implements OnInit {
