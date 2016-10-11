@@ -17,10 +17,11 @@ export declare class SelectComponent implements OnInit {
         id: any;
         text: any;
     }>;
-    fetchTimeoutHandle: number;
+    fetchOnInit: boolean;
     fetchTimeout: number;
     isLoading: boolean;
     loadingText: string;
+    private _fetchTimeoutHandle;
     items: Array<any>;
     disabled: boolean;
     active: Array<any>;

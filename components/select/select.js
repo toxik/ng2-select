@@ -21,6 +21,7 @@ var SelectComponent = (function () {
         this.idField = 'id';
         this.textField = 'text';
         this.multiple = false;
+        this.fetchOnInit = true;
         this.fetchTimeout = 50;
         this.isLoading = false;
         this.loadingText = 'Loading...';
@@ -176,10 +177,10 @@ var SelectComponent = (function () {
                 : target.value;
             this.behavior.filter(new RegExp(common_1.escapeRegexp(this.inputValue), 'ig'));
             this.doEvent('typed', this.inputValue);
-            if (this.fetchTimeoutHandle) {
-                window.clearTimeout(this.fetchTimeoutHandle);
+            if (this._fetchTimeoutHandle) {
+                window.clearTimeout(this._fetchTimeoutHandle);
             }
-            this.fetchTimeoutHandle = window.setTimeout(function () {
+            this._fetchTimeoutHandle = window.setTimeout(function () {
                 _this.triggerFetch();
             }, this.fetchTimeout);
         }
@@ -187,6 +188,9 @@ var SelectComponent = (function () {
     SelectComponent.prototype.ngOnInit = function () {
         this.behavior = (this.firstItemHasChildren) ?
             new ChildrenBehavior(this) : new GenericBehavior(this);
+        if (this.fetchOnInit) {
+            this.triggerFetch();
+        }
     };
     SelectComponent.prototype.remove = function (item) {
         if (this._disabled === true) {
@@ -375,7 +379,7 @@ var SelectComponent = (function () {
         'multiple': [{ type: core_1.Input },],
         'fetchUrl': [{ type: core_1.Input },],
         'responseMapper': [{ type: core_1.Input },],
-        'fetchTimeoutHandle': [{ type: core_1.Input },],
+        'fetchOnInit': [{ type: core_1.Input },],
         'fetchTimeout': [{ type: core_1.Input },],
         'isLoading': [{ type: core_1.Input },],
         'loadingText': [{ type: core_1.Input },],
