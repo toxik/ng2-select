@@ -99,6 +99,14 @@ let styles = `
       right: 10px;
       margin-top: -2px;
   }
+
+  .ui-no-results-container {
+    padding-left: 12px;
+  }
+
+  .ui-loading-container {
+    padding-left: 12px;
+  }
 `;
 
 @Component({
@@ -136,7 +144,7 @@ let styles = `
            *ngIf="inputMode"
            placeholder="{{active.length <= 0 ? placeholder : ''}}">
      <!-- options template -->
-     <ul *ngIf="optionsOpened && options && options.length > 0 && !firstItemHasChildren"
+     <ul *ngIf="!isLoading && optionsOpened && options && options.length > 0 && !firstItemHasChildren"
           class="ui-select-choices dropdown-menu" role="menu">
         <li *ngFor="let o of options" role="menuitem">
           <div class="ui-select-choices-row"
@@ -150,7 +158,7 @@ let styles = `
         </li>
       </ul>
   
-      <ul *ngIf="optionsOpened && options && options.length > 0 && firstItemHasChildren"
+      <ul *ngIf="!isLoading && optionsOpened && options && options.length > 0 && firstItemHasChildren"
           class="ui-select-choices dropdown-menu" role="menu">
         <li *ngFor="let c of options; let index=index" role="menuitem">
           <div class="divider dropdown-divider" *ngIf="index > 0"></div>
@@ -165,6 +173,28 @@ let styles = `
             <a href="javascript:void(0)" class="dropdown-item">
               <div [innerHtml]="sanitize(o.text | highlight:inputValue)"></div>
             </a>
+          </div>
+        </li>
+      </ul>
+
+      <ul *ngIf="!isLoading && optionsOpened && options && options.length === 0" 
+          class="ui-select-choices dropdown-menu" role="menu">
+        <li role="menuitem">
+          <div class="ui-select-choices-row">
+            <div class="dropdown-item ui-no-results-container">
+              <div [innerHtml]="sanitize(noResultsText)"></div>
+            </div>
+          </div>
+        </li>
+      </ul>
+
+      <ul *ngIf="isLoading && optionsOpened" 
+          class="ui-select-choices dropdown-menu" role="menu">
+        <li role="menuitem">
+          <div class="ui-select-choices-row">
+            <div class="dropdown-item ui-loading-container">
+              <div [innerHtml]="sanitize(loadingText)"></div>
+            </div>
           </div>
         </li>
       </ul>
@@ -202,7 +232,7 @@ let styles = `
            placeholder="{{active.length <= 0 ? placeholder : ''}}"
            role="combobox">
      <!-- options template -->
-     <ul *ngIf="optionsOpened && options && options.length > 0 && !firstItemHasChildren"
+     <ul *ngIf="!isLoading && optionsOpened && options && options.length > 0 && !firstItemHasChildren"
           class="ui-select-choices dropdown-menu" role="menu">
         <li *ngFor="let o of options" role="menuitem">
           <div class="ui-select-choices-row"
@@ -216,7 +246,7 @@ let styles = `
         </li>
       </ul>
   
-      <ul *ngIf="optionsOpened && options && options.length > 0 && firstItemHasChildren"
+      <ul *ngIf="!isLoading && optionsOpened && options && options.length > 0 && firstItemHasChildren"
           class="ui-select-choices dropdown-menu" role="menu">
         <li *ngFor="let c of options; let index=index" role="menuitem">
           <div class="divider dropdown-divider" *ngIf="index > 0"></div>
@@ -234,19 +264,44 @@ let styles = `
           </div>
         </li>
       </ul>
+
+      <ul *ngIf="!isLoading && optionsOpened && options && options.length === 0" 
+          class="ui-select-choices dropdown-menu" role="menu">
+        <li role="menuitem">
+          <div class="ui-select-choices-row">
+            <div class="dropdown-item ui-no-results-container">
+              <div [innerHtml]="sanitize(noResultsText)"></div>
+            </div>
+          </div>
+        </li>
+      </ul>
+
+      <ul *ngIf="isLoading && optionsOpened" 
+          class="ui-select-choices dropdown-menu" role="menu">
+        <li role="menuitem">
+          <div class="ui-select-choices-row">
+            <div class="dropdown-item ui-loading-container">
+              <div [innerHtml]="sanitize(loadingText)"></div>
+            </div>
+          </div>
+        </li>
+      </ul>
   </div>
   `
 })
 export class SelectComponent implements OnInit {
   @Input() public allowClear:boolean = false;
   @Input() public placeholder:string = '';
+  @Input() public noResultsText: string = 'No results found';
   @Input() public idField:string = 'id';
   @Input() public textField:string = 'text';
   @Input() public multiple:boolean = false;
   @Input() public fetchUrl:string;
-  @Input() public responseMapper: (response: Response) => Array<string | { id: any; text: any; }>;
-  @Input() public fetchTimeoutHandle: number;
-  @Input() public fetchTimeout: number = 50;
+  @Input() public responseMapper:(response: Response) => Array<string | { id: any; text: any; }>;
+  @Input() public fetchTimeoutHandle:number;
+  @Input() public fetchTimeout:number = 50;
+  @Input() public isLoading:boolean = false;
+  @Input() public loadingText:string = 'Loading...';
 
   @Input()
   public set items(value:Array<any>) {
@@ -261,6 +316,7 @@ export class SelectComponent implements OnInit {
       this.itemObjects = this._items.map((item:any) => new SelectItem(item));
       }
       this.options = this.itemObjects;
+      this.isLoading = false;
   }
 
   @Input()
@@ -404,16 +460,13 @@ export class SelectComponent implements OnInit {
       this.behavior.filter(new RegExp(escapeRegexp(this.inputValue), 'ig'));
       this.doEvent('typed', this.inputValue);
 
-      if (this.fetchUrl) {
-
-        if (this.fetchTimeoutHandle) {
-            window.clearTimeout(this.fetchTimeoutHandle);
-        }
-
-        this.fetchTimeoutHandle = window.setTimeout(() => {
-            this.triggerFetch();
-        }, this.fetchTimeout);
+      if (this.fetchTimeoutHandle) {
+          window.clearTimeout(this.fetchTimeoutHandle);
       }
+
+      this.fetchTimeoutHandle = window.setTimeout(() => {
+          this.triggerFetch();
+      }, this.fetchTimeout);    
     }
   }
 
@@ -576,6 +629,8 @@ export class SelectComponent implements OnInit {
 
   private fetchItemsFromUrl(): any {
 
+    this.isLoading = true;
+
     let fetchUrl = this.fetchUrl.replace(/\:inputValue/g, this.inputValue);
 
     this.http.get(fetchUrl).subscribe(
@@ -591,13 +646,18 @@ export class SelectComponent implements OnInit {
 
           this.doEvent('fetchedError', error);
 
+          this.isLoading = false;
+
           return;
-        }      
+        }
 
         this.doEvent('fetched', this._items);
+
+        this.isLoading = false;
       },
       (error: any) => {
         this.doEvent('fetchedError', error);
+        this.isLoading = false;
       });
   }
 }

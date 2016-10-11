@@ -8,6 +8,7 @@ export declare class SelectComponent implements OnInit {
     private http;
     allowClear: boolean;
     placeholder: string;
+    noResultsText: string;
     idField: string;
     textField: string;
     multiple: boolean;
@@ -18,6 +19,8 @@ export declare class SelectComponent implements OnInit {
     }>;
     fetchTimeoutHandle: number;
     fetchTimeout: number;
+    isLoading: boolean;
+    loadingText: string;
     items: Array<any>;
     disabled: boolean;
     active: Array<any>;
