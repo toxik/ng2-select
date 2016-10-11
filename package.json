@@ -58,7 +58,7 @@
     "@angular/compiler-cli": "0.6.2",
     "@angular/core": "2.0.0",
     "@angular/forms": "2.0.0",
-    "@angular/http": "2.0.2",
+    "@angular/http": "2.0.0",
     "@angular/platform-browser": "2.0.0",
     "@angular/platform-browser-dynamic": "2.0.0",
     "@types/jasmine": "2.2.34",
