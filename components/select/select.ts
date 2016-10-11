@@ -296,6 +296,7 @@ export class SelectComponent implements OnInit {
   @Output() public selected:EventEmitter<any> = new EventEmitter();
   @Output() public removed:EventEmitter<any> = new EventEmitter();
   @Output() public typed:EventEmitter<any> = new EventEmitter();
+  @Output() public fetching:EventEmitter<any> = new EventEmitter();
   @Output() public fetched:EventEmitter<any> = new EventEmitter();
   @Output() public fetchedError:EventEmitter<any> = new EventEmitter();
 
@@ -410,7 +411,7 @@ export class SelectComponent implements OnInit {
         }
 
         this.fetchTimeoutHandle = window.setTimeout(() => {
-            this.fetchItems();
+            this.triggerFetch();
         }, this.fetchTimeout);
       }
     }
@@ -558,7 +559,22 @@ export class SelectComponent implements OnInit {
     }
   }
 
-  private fetchItems(): any {
+  private triggerFetch(): any {
+
+    if (this.fetchUrl) {
+
+      this.fetchItemsFromUrl();
+
+    } else {
+
+      this.doEvent('fetching', {
+        query: this.inputValue,
+        items: this._items
+      });
+    }
+  }
+
+  private fetchItemsFromUrl(): any {
 
     let fetchUrl = this.fetchUrl.replace(/\:inputValue/g, this.inputValue);
 
@@ -576,9 +592,9 @@ export class SelectComponent implements OnInit {
           this.doEvent('fetchedError', error);
 
           return;
-        }       
+        }      
 
-        this.doEvent('fetched', this.items);
+        this.doEvent('fetched', this._items);
       },
       (error: any) => {
         this.doEvent('fetchedError', error);

@@ -25,6 +25,7 @@ var SelectComponent = (function () {
         this.selected = new core_1.EventEmitter();
         this.removed = new core_1.EventEmitter();
         this.typed = new core_1.EventEmitter();
+        this.fetching = new core_1.EventEmitter();
         this.fetched = new core_1.EventEmitter();
         this.fetchedError = new core_1.EventEmitter();
         this.options = [];
@@ -176,7 +177,7 @@ var SelectComponent = (function () {
                     window.clearTimeout(this.fetchTimeoutHandle);
                 }
                 this.fetchTimeoutHandle = window.setTimeout(function () {
-                    _this.fetchItems();
+                    _this.triggerFetch();
                 }, this.fetchTimeout);
             }
         }
@@ -317,7 +318,18 @@ var SelectComponent = (function () {
             this.element.nativeElement.querySelector('.ui-select-container').focus();
         }
     };
-    SelectComponent.prototype.fetchItems = function () {
+    SelectComponent.prototype.triggerFetch = function () {
+        if (this.fetchUrl) {
+            this.fetchItemsFromUrl();
+        }
+        else {
+            this.doEvent('fetching', {
+                query: this.inputValue,
+                items: this._items
+            });
+        }
+    };
+    SelectComponent.prototype.fetchItemsFromUrl = function () {
         var _this = this;
         var fetchUrl = this.fetchUrl.replace(/\:inputValue/g, this.inputValue);
         this.http.get(fetchUrl).subscribe(function (response) {
@@ -330,7 +342,7 @@ var SelectComponent = (function () {
                 _this.doEvent('fetchedError', error);
                 return;
             }
-            _this.doEvent('fetched', _this.items);
+            _this.doEvent('fetched', _this._items);
         }, function (error) {
             _this.doEvent('fetchedError', error);
         });
@@ -365,6 +377,7 @@ var SelectComponent = (function () {
         'selected': [{ type: core_1.Output },],
         'removed': [{ type: core_1.Output },],
         'typed': [{ type: core_1.Output },],
+        'fetching': [{ type: core_1.Output },],
         'fetched': [{ type: core_1.Output },],
         'fetchedError': [{ type: core_1.Output },],
     };

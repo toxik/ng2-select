@@ -25,6 +25,7 @@ export declare class SelectComponent implements OnInit {
     selected: EventEmitter<any>;
     removed: EventEmitter<any>;
     typed: EventEmitter<any>;
+    fetching: EventEmitter<any>;
     fetched: EventEmitter<any>;
     fetchedError: EventEmitter<any>;
     options: Array<SelectItem>;
@@ -55,7 +56,8 @@ export declare class SelectComponent implements OnInit {
     private hideOptions();
     private selectActiveMatch();
     private selectMatch(value, e?);
-    private fetchItems();
+    private triggerFetch();
+    private fetchItemsFromUrl();
 }
 export declare class Behavior {
     optionsMap: Map<string, number>;
