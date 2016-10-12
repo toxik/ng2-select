@@ -621,6 +621,8 @@ export class SelectComponent implements OnInit {
 
   private triggerFetch(): any {
 
+    this.isLoading = true;
+
     if (this.fetchUrl) {
       this.fetchItemsFromUrl();
     } else {
@@ -632,8 +634,6 @@ export class SelectComponent implements OnInit {
   }
 
   private fetchItemsFromUrl(): any {
-
-    this.isLoading = true;
 
     let fetchUrl = this.fetchUrl.replace(/\:inputValue/g, this.inputValue);
 
