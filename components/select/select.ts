@@ -319,7 +319,6 @@ export class SelectComponent implements OnInit {
       this.itemObjects = this._items.map((item:any) => new SelectItem(item));
       }
       this.options = this.itemObjects;
-      this.isLoading = false;
   }
 
   @Input()
@@ -635,7 +634,7 @@ export class SelectComponent implements OnInit {
 
     this.isLoading = true;
 
-    let fetchUrl = this.fetchUrl.replace(/\:inputValue/g, this.inputValue);    
+    let fetchUrl = this.fetchUrl.replace(/\:query/g, this.inputValue);    
 
     this.http.get(fetchUrl).subscribe(
       (response: Response) => {

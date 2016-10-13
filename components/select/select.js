@@ -57,7 +57,6 @@ var SelectComponent = (function () {
                 this.itemObjects = this._items.map(function (item) { return new select_item_1.SelectItem(item); });
             }
             this.options = this.itemObjects;
-            this.isLoading = false;
         },
         enumerable: true,
         configurable: true
@@ -338,7 +337,7 @@ var SelectComponent = (function () {
     SelectComponent.prototype.fetchItemsFromUrl = function () {
         var _this = this;
         this.isLoading = true;
-        var fetchUrl = this.fetchUrl.replace(/\:inputValue/g, this.inputValue);
+        var fetchUrl = this.fetchUrl.replace(/\:query/g, this.inputValue);
         this.http.get(fetchUrl).subscribe(function (response) {
             try {
                 _this.items = typeof _this.responseMapper === 'function'
