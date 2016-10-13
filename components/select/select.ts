@@ -301,7 +301,7 @@ export class SelectComponent implements OnInit {
   @Input() public responseMapper:(response: Response) => Array<string | { id: any; text: any; }>; 
   @Input() public fetchOnInit:boolean = true;
   @Input() public fetchTimeout:number = 50;
-  @Input() public isLoading:boolean = false;
+  @Input() public isLoading:boolean;
   @Input() public loadingText:string = 'Loading...';
 
   private _fetchTimeoutHandle:number;

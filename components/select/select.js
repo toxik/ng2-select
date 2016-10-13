@@ -23,7 +23,6 @@ var SelectComponent = (function () {
         this.multiple = false;
         this.fetchOnInit = true;
         this.fetchTimeout = 50;
-        this.isLoading = false;
         this.loadingText = 'Loading...';
         this.data = new core_1.EventEmitter();
         this.selected = new core_1.EventEmitter();
