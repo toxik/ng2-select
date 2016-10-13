@@ -325,7 +325,6 @@ var SelectComponent = (function () {
         }
     };
     SelectComponent.prototype.triggerFetch = function () {
-        this.isLoading = true;
         if (this.fetchUrl) {
             this.fetchItemsFromUrl();
         }
@@ -338,6 +337,7 @@ var SelectComponent = (function () {
     };
     SelectComponent.prototype.fetchItemsFromUrl = function () {
         var _this = this;
+        this.isLoading = true;
         var fetchUrl = this.fetchUrl.replace(/\:inputValue/g, this.inputValue);
         this.http.get(fetchUrl).subscribe(function (response) {
             try {
