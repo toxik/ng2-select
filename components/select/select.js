@@ -186,6 +186,8 @@ var SelectComponent = (function () {
     SelectComponent.prototype.ngOnInit = function () {
         this.behavior = (this.firstItemHasChildren) ?
             new ChildrenBehavior(this) : new GenericBehavior(this);
+    };
+    SelectComponent.prototype.ngAfterViewInit = function () {
         if (this.fetchOnInit) {
             this.triggerFetch();
         }
