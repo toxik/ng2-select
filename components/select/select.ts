@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, ElementRef, OnInit, AfterViewInit } from '@angular/core';
+import { Component, Input, Output, EventEmitter, ElementRef, OnInit, AfterViewInit, AfterContentInit } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { Http, Response } from '@angular/http'; 
 import { SelectItem } from './select-item';
@@ -290,7 +290,7 @@ let styles = `
   </div>
   `
 })
-export class SelectComponent implements OnInit, AfterViewInit {
+export class SelectComponent implements OnInit, AfterContentInit {
   @Input() public allowClear:boolean = false;
   @Input() public placeholder:string = '';
   @Input() public noResultsText: string = 'No results found';
@@ -477,9 +477,10 @@ export class SelectComponent implements OnInit, AfterViewInit {
       new ChildrenBehavior(this) : new GenericBehavior(this);
   }
 
-  public ngAfterViewInit(): any {
+  public ngAfterContentInit(): any {
+
     if(this.fetchOnInit) {
-      this.triggerFetch();
+      this.triggerFetch();    
     }
   }
 

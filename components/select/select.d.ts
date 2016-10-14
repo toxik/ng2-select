@@ -1,9 +1,9 @@
-import { EventEmitter, ElementRef, OnInit, AfterViewInit } from '@angular/core';
+import { EventEmitter, ElementRef, OnInit, AfterContentInit } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { Http, Response } from '@angular/http';
 import { SelectItem } from './select-item';
 import { OptionsBehavior } from './select-interfaces';
-export declare class SelectComponent implements OnInit, AfterViewInit {
+export declare class SelectComponent implements OnInit, AfterContentInit {
     private sanitizer;
     private http;
     allowClear: boolean;
@@ -47,7 +47,7 @@ export declare class SelectComponent implements OnInit, AfterViewInit {
     sanitize(html: string): SafeHtml;
     inputEvent(e: any, isUpMode?: boolean): void;
     ngOnInit(): any;
-    ngAfterViewInit(): any;
+    ngAfterContentInit(): any;
     remove(item: SelectItem): void;
     doEvent(type: string, value: any): void;
     clickedOutside(): void;
