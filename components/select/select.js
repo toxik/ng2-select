@@ -267,7 +267,7 @@ var SelectComponent = (function () {
         this.activeOption = value;
     };
     SelectComponent.prototype.isActive = function (value) {
-        return this.activeOption.text === value.text;
+        return this.activeOption && this.activeOption.text === value.text;
     };
     SelectComponent.prototype.focusToInput = function (value) {
         var _this = this;
@@ -338,7 +338,9 @@ var SelectComponent = (function () {
     SelectComponent.prototype.fetchItemsFromUrl = function () {
         var _this = this;
         this.isLoading = true;
-        var fetchUrl = this.fetchUrl.replace(/\:query/g, this.inputValue);
+        var fetchUrl = !this.inputValue && this.defaultFetchUrl
+            ? this.defaultFetchUrl
+            : this.fetchUrl.replace(/\:query/g, (this.inputValue));
         this.http.get(fetchUrl).subscribe(function (response) {
             try {
                 _this.items = typeof _this.responseMapper === 'function'
@@ -348,7 +350,7 @@ var SelectComponent = (function () {
             catch (error) {
                 _this.doEvent('fetchedError', error);
                 _this.isLoading = false;
-                return;
+                throw error;
             }
             _this.doEvent('fetched', _this._items);
             _this.isLoading = false;
@@ -378,6 +380,7 @@ var SelectComponent = (function () {
         'textField': [{ type: core_1.Input },],
         'multiple': [{ type: core_1.Input },],
         'fetchUrl': [{ type: core_1.Input },],
+        'defaultFetchUrl': [{ type: core_1.Input },],
         'responseMapper': [{ type: core_1.Input },],
         'fetchOnInit': [{ type: core_1.Input },],
         'fetchTimeout': [{ type: core_1.Input },],

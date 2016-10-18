@@ -298,6 +298,7 @@ export class SelectComponent implements OnInit, AfterContentInit {
   @Input() public textField:string = 'text';
   @Input() public multiple:boolean = false;
   @Input() public fetchUrl:string;
+  @Input() public defaultFetchUrl:string;
   @Input() public responseMapper:(response: Response) => Array<string | { id: any; text: any; }>; 
   @Input() public fetchOnInit:boolean = true;
   @Input() public fetchTimeout:number = 50;
@@ -562,7 +563,7 @@ export class SelectComponent implements OnInit, AfterContentInit {
   }
 
   protected  isActive(value:SelectItem):boolean {
-    return this.activeOption.text === value.text;
+    return this.activeOption && this.activeOption.text === value.text;
   }
 
   private focusToInput(value:string = ''):void {
@@ -637,7 +638,9 @@ export class SelectComponent implements OnInit, AfterContentInit {
 
     this.isLoading = true;
 
-    let fetchUrl = this.fetchUrl.replace(/\:query/g, this.inputValue);    
+    let fetchUrl = !this.inputValue && this.defaultFetchUrl
+      ? this.defaultFetchUrl
+      : this.fetchUrl.replace(/\:query/g, (this.inputValue));
 
     this.http.get(fetchUrl).subscribe(
       (response: Response) => {
@@ -648,7 +651,7 @@ export class SelectComponent implements OnInit, AfterContentInit {
         } catch(error) {
           this.doEvent('fetchedError', error);
           this.isLoading = false;
-          return;
+          throw error;
         }
         this.doEvent('fetched', this._items);
         this.isLoading = false;

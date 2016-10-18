@@ -13,6 +13,7 @@ export declare class SelectComponent implements OnInit, AfterContentInit {
     textField: string;
     multiple: boolean;
     fetchUrl: string;
+    defaultFetchUrl: string;
     responseMapper: (response: Response) => Array<string | {
         id: any;
         text: any;
