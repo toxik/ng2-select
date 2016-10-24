@@ -302,10 +302,12 @@ export class SelectComponent implements OnInit, AfterContentInit {
   @Input() public responseMapper:(response: Response) => Array<string | { id: any; text: any; }>; 
   @Input() public fetchOnInit:boolean = true;
   @Input() public fetchTimeout:number = 50;
+  @Input() public loadingTimeout:number = this.fetchTimeout + 50;
   @Input() public isLoading:boolean;
   @Input() public loadingText:string = 'Loading...';
 
   private _fetchTimeoutHandle:number;
+  private _loadingTimeoutHandle:number;
 
   @Input()
   public set items(value:Array<any>) {
@@ -511,6 +513,8 @@ export class SelectComponent implements OnInit, AfterContentInit {
   public clickedOutside():void {
     this.inputMode = false;
     this.optionsOpened = false;
+    this.isLoading = false;
+    this.inputValue = '';
   }
 
   public get firstItemHasChildren():boolean {
@@ -636,7 +640,13 @@ export class SelectComponent implements OnInit, AfterContentInit {
 
   private fetchItemsFromUrl(): any {
 
-    this.isLoading = true;
+    if (this._loadingTimeoutHandle) {
+        window.clearTimeout(this._loadingTimeoutHandle);
+    }
+
+    this._loadingTimeoutHandle = window.setTimeout(() => {
+        this.isLoading = true;
+    }, this.loadingTimeout);
 
     let fetchUrl = !this.inputValue && this.defaultFetchUrl
       ? this.defaultFetchUrl

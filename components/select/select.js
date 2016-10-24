@@ -23,6 +23,7 @@ var SelectComponent = (function () {
         this.multiple = false;
         this.fetchOnInit = true;
         this.fetchTimeout = 50;
+        this.loadingTimeout = this.fetchTimeout + 50;
         this.loadingText = 'Loading...';
         this.data = new core_1.EventEmitter();
         this.selected = new core_1.EventEmitter();
@@ -216,6 +217,8 @@ var SelectComponent = (function () {
     SelectComponent.prototype.clickedOutside = function () {
         this.inputMode = false;
         this.optionsOpened = false;
+        this.isLoading = false;
+        this.inputValue = '';
     };
     Object.defineProperty(SelectComponent.prototype, "firstItemHasChildren", {
         get: function () {
@@ -337,7 +340,12 @@ var SelectComponent = (function () {
     };
     SelectComponent.prototype.fetchItemsFromUrl = function () {
         var _this = this;
-        this.isLoading = true;
+        if (this._loadingTimeoutHandle) {
+            window.clearTimeout(this._loadingTimeoutHandle);
+        }
+        this._loadingTimeoutHandle = window.setTimeout(function () {
+            _this.isLoading = true;
+        }, this.loadingTimeout);
         var fetchUrl = !this.inputValue && this.defaultFetchUrl
             ? this.defaultFetchUrl
             : this.fetchUrl.replace(/\:query/g, (this.inputValue));
@@ -384,6 +392,7 @@ var SelectComponent = (function () {
         'responseMapper': [{ type: core_1.Input },],
         'fetchOnInit': [{ type: core_1.Input },],
         'fetchTimeout': [{ type: core_1.Input },],
+        'loadingTimeout': [{ type: core_1.Input },],
         'isLoading': [{ type: core_1.Input },],
         'loadingText': [{ type: core_1.Input },],
         'items': [{ type: core_1.Input },],
