@@ -515,6 +515,9 @@ export class SelectComponent implements OnInit, AfterContentInit {
     this.optionsOpened = false;
     this.isLoading = false;
     this.inputValue = '';
+    this.behavior.next();
+    this.behavior.filter(new RegExp(escapeRegexp(this.inputValue), 'ig'));
+    this.triggerFetch();
   }
 
   public get firstItemHasChildren():boolean {

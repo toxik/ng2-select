@@ -219,6 +219,9 @@ var SelectComponent = (function () {
         this.optionsOpened = false;
         this.isLoading = false;
         this.inputValue = '';
+        this.behavior.next();
+        this.behavior.filter(new RegExp(common_1.escapeRegexp(this.inputValue), 'ig'));
+        this.triggerFetch();
     };
     Object.defineProperty(SelectComponent.prototype, "firstItemHasChildren", {
         get: function () {
