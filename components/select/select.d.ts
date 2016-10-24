@@ -1,5 +1,5 @@
 import { EventEmitter, ElementRef, OnInit, AfterContentInit } from '@angular/core';
-import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { DomSanitizer } from '@angular/platform-browser';
 import { Http, Response } from '@angular/http';
 import { SelectItem } from './select-item';
 import { OptionsBehavior } from './select-interfaces';
@@ -45,7 +45,7 @@ export declare class SelectComponent implements OnInit, AfterContentInit {
     private _disabled;
     private _active;
     constructor(element: ElementRef, sanitizer: DomSanitizer, http: Http);
-    sanitize(html: string): SafeHtml;
+    sanitize(html: string): string;
     inputEvent(e: any, isUpMode?: boolean): void;
     ngOnInit(): any;
     ngAfterContentInit(): any;

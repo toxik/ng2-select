@@ -381,8 +381,8 @@ export class SelectComponent implements OnInit, AfterContentInit {
     this.clickedOutside = this.clickedOutside.bind(this);
   }
 
-  public sanitize(html:string):SafeHtml {
-    return this.sanitizer.bypassSecurityTrustHtml(html);
+  public sanitize(html:string):string {
+    return html;
   }
 
   public inputEvent(e:any, isUpMode:boolean = false):void {
