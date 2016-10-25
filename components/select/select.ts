@@ -142,7 +142,7 @@ let styles = `
            [disabled]="disabled"
            class="form-control ui-select-search"
            *ngIf="inputMode"
-           placeholder="inputPlaceholder">
+           placeholder="{{inputPlaceholder}}">
      <!-- options template -->
      <ul *ngIf="!isLoading && optionsOpened && options && options.length > 0 && !firstItemHasChildren"
           class="ui-select-choices dropdown-menu" role="menu">
