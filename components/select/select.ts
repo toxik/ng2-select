@@ -301,11 +301,11 @@ export class SelectComponent implements OnInit, AfterContentInit {
   @Input() public defaultFetchUrl:string;
   @Input() public responseMapper:(response: Response) => Array<string | { id: any; text: any; }>; 
   @Input() public fetchOnInit:boolean = true;
-  @Input() public fetchTimeout:number = 50;
-  @Input() public loadingTimeout:number = this.fetchTimeout + 50;
   @Input() public isLoading:boolean;
   @Input() public loadingText:string = 'Loading...';
 
+  private _fetchTimeout:number = 50;
+  private _loadingTimeout:number = this._fetchTimeout + 50;
   private _fetchTimeoutHandle:number;
   private _loadingTimeoutHandle:number;
 
@@ -351,6 +351,12 @@ export class SelectComponent implements OnInit, AfterContentInit {
         return new SelectItem(data);
       });
     }
+  }
+
+  @Input()
+  public set fetchTimeout(value:number) {
+    this._fetchTimeout = value;
+    this._loadingTimeout = this._fetchTimeout + 50;
   }
 
   @Output() public data:EventEmitter<any> = new EventEmitter();
@@ -472,7 +478,7 @@ export class SelectComponent implements OnInit, AfterContentInit {
 
       this._fetchTimeoutHandle = window.setTimeout(() => {
           this.triggerFetch();
-      }, this.fetchTimeout);    
+      }, this._fetchTimeout);
     }
   }
 
@@ -652,7 +658,7 @@ export class SelectComponent implements OnInit, AfterContentInit {
         if (this._isFetching) {
           this.isLoading = true;
         }
-    }, this.loadingTimeout);
+    }, this._loadingTimeout);
 
     let fetchUrl = !this.inputValue && this.defaultFetchUrl
       ? this.defaultFetchUrl

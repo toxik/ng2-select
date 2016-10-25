@@ -19,15 +19,16 @@ export declare class SelectComponent implements OnInit, AfterContentInit {
         text: any;
     }>;
     fetchOnInit: boolean;
-    fetchTimeout: number;
-    loadingTimeout: number;
     isLoading: boolean;
     loadingText: string;
+    private _fetchTimeout;
+    private _loadingTimeout;
     private _fetchTimeoutHandle;
     private _loadingTimeoutHandle;
     items: Array<any>;
     disabled: boolean;
     active: Array<any>;
+    fetchTimeout: number;
     data: EventEmitter<any>;
     selected: EventEmitter<any>;
     removed: EventEmitter<any>;

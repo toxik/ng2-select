@@ -22,9 +22,9 @@ var SelectComponent = (function () {
         this.textField = 'text';
         this.multiple = false;
         this.fetchOnInit = true;
-        this.fetchTimeout = 50;
-        this.loadingTimeout = this.fetchTimeout + 50;
         this.loadingText = 'Loading...';
+        this._fetchTimeout = 50;
+        this._loadingTimeout = this._fetchTimeout + 50;
         this.data = new core_1.EventEmitter();
         this.selected = new core_1.EventEmitter();
         this.removed = new core_1.EventEmitter();
@@ -93,6 +93,14 @@ var SelectComponent = (function () {
                     return new select_item_1.SelectItem(data);
                 });
             }
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(SelectComponent.prototype, "fetchTimeout", {
+        set: function (value) {
+            this._fetchTimeout = value;
+            this._loadingTimeout = this._fetchTimeout + 50;
         },
         enumerable: true,
         configurable: true
@@ -182,7 +190,7 @@ var SelectComponent = (function () {
             }
             this._fetchTimeoutHandle = window.setTimeout(function () {
                 _this.triggerFetch();
-            }, this.fetchTimeout);
+            }, this._fetchTimeout);
         }
     };
     SelectComponent.prototype.ngOnInit = function () {
@@ -351,7 +359,7 @@ var SelectComponent = (function () {
             if (_this._isFetching) {
                 _this.isLoading = true;
             }
-        }, this.loadingTimeout);
+        }, this._loadingTimeout);
         var fetchUrl = !this.inputValue && this.defaultFetchUrl
             ? this.defaultFetchUrl
             : this.fetchUrl.replace(/\:query/g, (this.inputValue));
@@ -401,13 +409,12 @@ var SelectComponent = (function () {
         'defaultFetchUrl': [{ type: core_1.Input },],
         'responseMapper': [{ type: core_1.Input },],
         'fetchOnInit': [{ type: core_1.Input },],
-        'fetchTimeout': [{ type: core_1.Input },],
-        'loadingTimeout': [{ type: core_1.Input },],
         'isLoading': [{ type: core_1.Input },],
         'loadingText': [{ type: core_1.Input },],
         'items': [{ type: core_1.Input },],
         'disabled': [{ type: core_1.Input },],
         'active': [{ type: core_1.Input },],
+        'fetchTimeout': [{ type: core_1.Input },],
         'data': [{ type: core_1.Output },],
         'selected': [{ type: core_1.Output },],
         'removed': [{ type: core_1.Output },],
