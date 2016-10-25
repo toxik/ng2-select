@@ -516,6 +516,8 @@ export class SelectComponent implements OnInit, AfterContentInit {
       this.active.splice(index, 1);
       this.data.next(this.active);
       this.doEvent('removed', item);
+      this.behavior.next();
+      this.behavior.filter(new RegExp(escapeRegexp(this.inputValue), 'ig'));
     }
     if (this.multiple === false) {
       this.active = [];
