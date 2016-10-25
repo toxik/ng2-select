@@ -62,6 +62,7 @@ export declare class SelectComponent implements OnInit, AfterContentInit {
     protected mainClick(event: any): void;
     protected selectActive(value: SelectItem): void;
     protected isActive(value: SelectItem): boolean;
+    protected getActiveIndex(value: SelectItem): number;
     private focusToInput(value?);
     private open();
     private hideOptions();

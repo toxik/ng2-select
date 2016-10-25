@@ -181,7 +181,7 @@ var SelectComponent = (function () {
         }
         // enter
         if (!isUpMode && e.keyCode === 13) {
-            if (this.active.indexOf(this.activeOption) === -1) {
+            if (this.getActiveIndex(this.activeOption) === -1) {
                 this.selectActiveMatch();
                 this.behavior.next();
             }
@@ -217,7 +217,7 @@ var SelectComponent = (function () {
             return;
         }
         if (this.multiple === true && this.active) {
-            var index = this.active.indexOf(item);
+            var index = this.getActiveIndex(item);
             this.active.splice(index, 1);
             this.data.next(this.active);
             this.doEvent('removed', item);
@@ -293,6 +293,26 @@ var SelectComponent = (function () {
     };
     SelectComponent.prototype.isActive = function (value) {
         return this.activeOption && this.activeOption.text === value.text;
+    };
+    SelectComponent.prototype.getActiveIndex = function (value) {
+        var index = -1;
+        if (!this.active || this.active.length === 0) {
+            return index;
+        }
+        for (var i = 0; i < this.active.length; i++) {
+            var item = this.active[i];
+            if (typeof item === 'object' && item !== null &&
+                (typeof item.text === 'undefined' || item.text === value.text) &&
+                (typeof item.id === 'undefined' || item.id === value.id)) {
+                index = i;
+                break;
+            }
+            if (item === value) {
+                index = i;
+                break;
+            }
+        }
+        return index;
     };
     SelectComponent.prototype.focusToInput = function (value) {
         var _this = this;
