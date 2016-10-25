@@ -40,6 +40,7 @@ export declare class SelectComponent implements OnInit, AfterContentInit {
     itemObjects: Array<SelectItem>;
     activeOption: SelectItem;
     element: ElementRef;
+    readonly inputPlaceholder: any;
     private inputMode;
     private optionsOpened;
     private behavior;
