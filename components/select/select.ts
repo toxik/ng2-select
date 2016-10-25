@@ -138,7 +138,7 @@ let styles = `
     </div>
     <input type="text" autocomplete="false" tabindex="-1"
            (keydown)="inputEvent($event)"
-           (keyup)="inputEvent($event, true)"
+           (keyup)="inputEvent($event, true)";
            [disabled]="disabled"
            class="form-control ui-select-search"
            *ngIf="inputMode"
@@ -377,6 +377,7 @@ export class SelectComponent implements OnInit, AfterContentInit {
   private _items:Array<any> = [];
   private _disabled:boolean = false;
   private _active:Array<SelectItem> = [];
+  private _isFetching:boolean = false;
 
   public constructor(element:ElementRef, private sanitizer:DomSanitizer, private http:Http) {
     this.element = element;
@@ -648,12 +649,16 @@ export class SelectComponent implements OnInit, AfterContentInit {
     }
 
     this._loadingTimeoutHandle = window.setTimeout(() => {
-        this.isLoading = true;
+        if (this._isFetching) {
+          this.isLoading = true;
+        }
     }, this.loadingTimeout);
 
     let fetchUrl = !this.inputValue && this.defaultFetchUrl
       ? this.defaultFetchUrl
       : this.fetchUrl.replace(/\:query/g, (this.inputValue));
+
+    this._isFetching = true;
 
     this.http.get(fetchUrl).subscribe(
       (response: Response) => {
@@ -664,14 +669,17 @@ export class SelectComponent implements OnInit, AfterContentInit {
         } catch(error) {
           this.doEvent('fetchedError', error);
           this.isLoading = false;
+          this._isFetching = false;
           throw error;
         }
         this.doEvent('fetched', this._items);
         this.isLoading = false;
+        this._isFetching = false;
       },
       (error: any) => {
         this.doEvent('fetchedError', error);
         this.isLoading = false;
+        this._isFetching = false;
       });
   }
 }

@@ -46,6 +46,7 @@ export declare class SelectComponent implements OnInit, AfterContentInit {
     private _items;
     private _disabled;
     private _active;
+    private _isFetching;
     constructor(element: ElementRef, sanitizer: DomSanitizer, http: Http);
     sanitize(html: string): string;
     inputEvent(e: any, isUpMode?: boolean): void;
