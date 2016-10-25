@@ -377,7 +377,12 @@ export class SelectComponent implements OnInit, AfterContentInit {
   }
 
   public get inputPlaceholder() {
-    return this.active.length <= 0 ? this.placeholder : this.active[0].text;
+
+    let inputPlaceholder = !this.multiple
+      ? this.active[0].text
+      : '';
+
+    return this.active.length <= 0 ? this.placeholder : inputPlaceholder;
   }
 
   private inputMode:boolean = false;
