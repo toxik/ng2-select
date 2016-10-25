@@ -107,10 +107,10 @@ var SelectComponent = (function () {
     });
     Object.defineProperty(SelectComponent.prototype, "inputPlaceholder", {
         get: function () {
-            var inputPlaceholder = !this.multiple
-                ? this.active[0].text
-                : '';
-            return this.active.length <= 0 ? this.placeholder : inputPlaceholder;
+            if (!this.multiple && this.active.length >= 0 && this.active[0]) {
+                return this.active[0].text;
+            }
+            return this.placeholder;
         },
         enumerable: true,
         configurable: true
