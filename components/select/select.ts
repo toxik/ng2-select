@@ -138,7 +138,7 @@ let styles = `
     </div>
     <input type="text" autocomplete="false" tabindex="-1"
            (keydown)="inputEvent($event)"
-           (keyup)="inputEvent($event, true)";
+           (keyup)="inputEvent($event, true)"
            [disabled]="disabled"
            class="form-control ui-select-search"
            *ngIf="inputMode"
