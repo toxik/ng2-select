@@ -4,7 +4,7 @@ import { escapeRegexp } from './common';
 @Pipe({name: 'highlight'})
 export class HighlightPipe implements PipeTransform {
   public transform(value:string, query:string):any {
-    if (query.length < 1) {
+    if (!query || query.length < 1) {
       return value;
     }
 
@@ -29,5 +29,6 @@ export class HighlightPipe implements PipeTransform {
 export function stripTags(input:string):string {
   let tags = /<\/?([a-z][a-z0-9]*)\b[^>]*>/gi;
   let commentsAndPhpTags = /<!--[\s\S]*?-->|<\?(?:php)?[\s\S]*?\?>/gi;
+  input = input || '';
   return ('' + input).replace(commentsAndPhpTags, '').replace(tags, '');
 }

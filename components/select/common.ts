@@ -1,3 +1,4 @@
 export function escapeRegexp(queryToEscape:string):string {
-  return queryToEscape.replace(/([.?*+^$[\]\\(){}|-])/g, '\\$1');
+  queryToEscape = queryToEscape || '';
+  return ('' + queryToEscape).replace(/([.?*+^$[\]\\(){}|-])/g, '\\$1');
 }

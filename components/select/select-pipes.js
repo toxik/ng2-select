@@ -5,7 +5,7 @@ var HighlightPipe = (function () {
     function HighlightPipe() {
     }
     HighlightPipe.prototype.transform = function (value, query) {
-        if (query.length < 1) {
+        if (!query || query.length < 1) {
             return value;
         }
         if (query) {
@@ -34,6 +34,7 @@ exports.HighlightPipe = HighlightPipe;
 function stripTags(input) {
     var tags = /<\/?([a-z][a-z0-9]*)\b[^>]*>/gi;
     var commentsAndPhpTags = /<!--[\s\S]*?-->|<\?(?:php)?[\s\S]*?\?>/gi;
+    input = input || '';
     return ('' + input).replace(commentsAndPhpTags, '').replace(tags, '');
 }
 exports.stripTags = stripTags;
