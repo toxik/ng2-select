@@ -34,6 +34,6 @@ exports.HighlightPipe = HighlightPipe;
 function stripTags(input) {
     var tags = /<\/?([a-z][a-z0-9]*)\b[^>]*>/gi;
     var commentsAndPhpTags = /<!--[\s\S]*?-->|<\?(?:php)?[\s\S]*?\?>/gi;
-    return input.replace(commentsAndPhpTags, '').replace(tags, '');
+    return ('' + input).replace(commentsAndPhpTags, '').replace(tags, '');
 }
 exports.stripTags = stripTags;

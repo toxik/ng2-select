@@ -304,7 +304,7 @@ export class SelectComponent implements OnInit, AfterContentInit {
   @Input() public isLoading:boolean;
   @Input() public loadingText:string = 'Loading...';
 
-  private _fetchTimeout:number = 50;
+  private _fetchTimeout:number = 100;
   private _loadingTimeout:number = this._fetchTimeout + 50;
   private _fetchTimeoutHandle:number;
   private _loadingTimeoutHandle:number;
