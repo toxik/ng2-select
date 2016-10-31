@@ -533,13 +533,16 @@ export class SelectComponent implements OnInit, AfterContentInit {
   }
 
   public clickedOutside():void {
+    let wasPreviouslyOpened = this.optionsOpened;
     this.inputMode = false;
     this.optionsOpened = false;
     this.isLoading = false;
     this.inputValue = '';
     this.behavior.next();
     this.behavior.filter(new RegExp(escapeRegexp(this.inputValue), 'ig'));
-    this.triggerFetch();
+    if (wasPreviouslyOpened){
+      this.triggerFetch();
+    }   
   }
 
   public get firstItemHasChildren():boolean {
@@ -599,7 +602,7 @@ export class SelectComponent implements OnInit, AfterContentInit {
 
     let index = -1;
 
-    if (!this.active || this.active.length === 0) {
+    if (!value || !this.active || this.active.length === 0) {
       return index;
     }   
 

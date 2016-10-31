@@ -242,13 +242,16 @@ var SelectComponent = (function () {
         }
     };
     SelectComponent.prototype.clickedOutside = function () {
+        var wasPreviouslyOpened = this.optionsOpened;
         this.inputMode = false;
         this.optionsOpened = false;
         this.isLoading = false;
         this.inputValue = '';
         this.behavior.next();
         this.behavior.filter(new RegExp(common_1.escapeRegexp(this.inputValue), 'ig'));
-        this.triggerFetch();
+        if (wasPreviouslyOpened) {
+            this.triggerFetch();
+        }
     };
     Object.defineProperty(SelectComponent.prototype, "firstItemHasChildren", {
         get: function () {
@@ -304,7 +307,7 @@ var SelectComponent = (function () {
     };
     SelectComponent.prototype.getActiveIndex = function (value) {
         var index = -1;
-        if (!this.active || this.active.length === 0) {
+        if (!value || !this.active || this.active.length === 0) {
             return index;
         }
         for (var i = 0; i < this.active.length; i++) {
