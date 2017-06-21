@@ -4,6 +4,7 @@ import { SelectItem } from './select-item';
 import { stripTags } from './select-pipes';
 import { OptionsBehavior } from './select-interfaces';
 import { escapeRegexp } from './common';
+import { SelectEmitterService } from './select-emitter.service';
 
 let styles = `
   .ui-select-toggle {
@@ -310,9 +311,12 @@ export class SelectComponent implements OnInit {
   private _disabled:boolean = false;
   private _active:Array<SelectItem> = [];
 
-  public constructor(element:ElementRef, private sanitizer:DomSanitizer) {
+  public constructor(element:ElementRef, private sanitizer:DomSanitizer, private emitter: SelectEmitterService) {
     this.element = element;
     this.clickedOutside = this.clickedOutside.bind(this);
+    this.emitter.notification.subscribe((opened: any) => {
+      if (opened !== this) this.clickedOutside();
+    });
   }
 
   public sanitize(html:string):SafeHtml {
@@ -500,6 +504,7 @@ export class SelectComponent implements OnInit {
       this.behavior.first();
     }
     this.optionsOpened = true;
+    this.emitter.sendNotification(this);
   }
 
   private hideOptions():void {
