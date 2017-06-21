@@ -10,11 +10,14 @@ var http_1 = require('@angular/http');
 var select_item_1 = require('./select-item');
 var select_pipes_1 = require('./select-pipes');
 var common_1 = require('./common');
+var select_emitter_service_1 = require('./select-emitter.service');
 var styles = "\n  .ui-select-toggle {\n    position: relative;\n  }\n  \n  /* Fix Bootstrap dropdown position when inside a input-group */\n  .input-group > .dropdown {\n    /* Instead of relative */\n    position: static;\n  }\n  \n  .ui-select-match > .btn {\n    /* Instead of center because of .btn */\n    text-align: left !important;\n  }\n  \n  .ui-select-match > .caret {\n    position: absolute;\n    top: 45%;\n    right: 15px;\n  }\n  \n  .ui-disabled {\n    background-color: #eceeef;\n    border-radius: 4px;\n    position: absolute;\n    width: 100%;\n    height: 100%;\n    z-index: 5;\n    opacity: 0.6;\n    top: 0;\n    left: 0;\n    cursor: not-allowed;\n  }\n  \n  .ui-select-choices {\n    width: 100%;\n    height: auto;\n    max-height: 200px;\n    overflow-x: hidden;\n    margin-top: 0;\n  }\n  \n  .ui-select-multiple .ui-select-choices {\n    margin-top: 1px;\n  }\n  .ui-select-choices-row>a {\n      display: block;\n      padding: 3px 20px;\n      clear: both;\n      font-weight: 400;\n      line-height: 1.42857143;\n      color: #333;\n      white-space: nowrap;\n  }\n  .ui-select-choices-row.active>a {\n      color: #fff;\n      text-decoration: none;\n      outline: 0;\n      background-color: #428bca;\n  }\n  \n  .ui-select-multiple {\n    height: auto;\n    padding:3px 3px 0 3px;\n  }\n  \n  .ui-select-multiple input.ui-select-search {\n    background-color: transparent !important; /* To prevent double background when disabled */\n    border: none;\n    outline: none;\n    box-shadow: none;\n    height: 1.6666em;\n    padding: 0;\n    margin-bottom: 3px;\n    \n  }\n  .ui-select-match .close {\n      font-size: 1.6em;\n      line-height: 0.75;\n  }\n  \n  .ui-select-multiple .ui-select-match-item {\n    outline: 0;\n    margin: 0 3px 3px 0;\n  }\n  .ui-select-toggle > .caret {\n      position: absolute;\n      height: 10px;\n      top: 50%;\n      right: 10px;\n      margin-top: -2px;\n  }\n\n  .ui-no-results-container {\n    padding-left: 12px;\n  }\n\n  .ui-loading-container {\n    padding-left: 12px;\n  }\n";
 var SelectComponent = (function () {
-    function SelectComponent(element, sanitizer, http) {
+    function SelectComponent(element, sanitizer, http, emitter) {
+        var _this = this;
         this.sanitizer = sanitizer;
         this.http = http;
+        this.emitter = emitter;
         this.allowClear = false;
         this.placeholder = '';
         this.noResultsText = 'No results found';
@@ -43,6 +46,10 @@ var SelectComponent = (function () {
         this._isFetching = false;
         this.element = element;
         this.clickedOutside = this.clickedOutside.bind(this);
+        this.emitter.notification.subscribe(function (opened) {
+            if (opened !== _this)
+                _this.clickedOutside();
+        });
     }
     Object.defineProperty(SelectComponent.prototype, "items", {
         set: function (value) {
@@ -345,6 +352,7 @@ var SelectComponent = (function () {
             this.behavior.first();
         }
         this.optionsOpened = true;
+        this.emitter.sendNotification(this);
     };
     SelectComponent.prototype.hideOptions = function () {
         this.inputMode = false;
@@ -438,6 +446,7 @@ var SelectComponent = (function () {
         { type: core_1.ElementRef, },
         { type: platform_browser_1.DomSanitizer, },
         { type: http_1.Http, },
+        { type: select_emitter_service_1.SelectEmitterService, },
     ];
     SelectComponent.propDecorators = {
         'allowClear': [{ type: core_1.Input },],

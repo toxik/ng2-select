@@ -3,9 +3,11 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { Http, Response } from '@angular/http';
 import { SelectItem } from './select-item';
 import { OptionsBehavior } from './select-interfaces';
+import { SelectEmitterService } from './select-emitter.service';
 export declare class SelectComponent implements OnInit, AfterContentInit {
     private sanitizer;
     private http;
+    private emitter;
     allowClear: boolean;
     placeholder: string;
     noResultsText: string;
@@ -49,7 +51,7 @@ export declare class SelectComponent implements OnInit, AfterContentInit {
     private _disabled;
     private _active;
     private _isFetching;
-    constructor(element: ElementRef, sanitizer: DomSanitizer, http: Http);
+    constructor(element: ElementRef, sanitizer: DomSanitizer, http: Http, emitter: SelectEmitterService);
     sanitize(html: string): string;
     inputEvent(e: any, isUpMode?: boolean): void;
     ngOnInit(): any;
