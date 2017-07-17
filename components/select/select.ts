@@ -49,6 +49,10 @@ let styles = `
     overflow-x: hidden;
     margin-top: 0;
   }
+  .ui-select-choices.direction-up {
+    bottom: 100%;
+    top: auto;
+  }
   
   .ui-select-multiple .ui-select-choices {
     margin-top: 1px;
@@ -146,7 +150,7 @@ let styles = `
            placeholder="{{inputPlaceholder}}">
      <!-- options template -->
      <ul *ngIf="!isLoading && optionsOpened && options && options.length > 0 && !firstItemHasChildren"
-          class="ui-select-choices dropdown-menu" role="menu">
+          class="ui-select-choices dropdown-menu" [class.direction-up]="direction === 'up'" role="menu">
         <li *ngFor="let o of options" role="menuitem">
           <div class="ui-select-choices-row"
                [class.active]="isActive(o)"
@@ -160,7 +164,7 @@ let styles = `
       </ul>
   
       <ul *ngIf="!isLoading && optionsOpened && options && options.length > 0 && firstItemHasChildren"
-          class="ui-select-choices dropdown-menu" role="menu">
+          class="ui-select-choices dropdown-menu" [class.direction-up]="direction === 'up'" role="menu">
         <li *ngFor="let c of options; let index=index" role="menuitem">
           <div class="divider dropdown-divider" *ngIf="index > 0"></div>
           <div class="dropdown-header">{{c.text}}</div>
@@ -179,7 +183,7 @@ let styles = `
       </ul>
 
       <ul *ngIf="!isLoading && optionsOpened && options && options.length === 0" 
-          class="ui-select-choices dropdown-menu" role="menu">
+          class="ui-select-choices dropdown-menu" [class.direction-up]="direction === 'up'" role="menu">
         <li role="menuitem">
           <div class="ui-select-choices-row">
             <div class="dropdown-item ui-no-results-container">
@@ -190,7 +194,7 @@ let styles = `
       </ul>
 
       <ul *ngIf="isLoading && optionsOpened" 
-          class="ui-select-choices dropdown-menu" role="menu">
+          class="ui-select-choices dropdown-menu" [class.direction-up]="direction === 'up'" role="menu">
         <li role="menuitem">
           <div class="ui-select-choices-row">
             <div class="dropdown-item ui-loading-container">
@@ -235,7 +239,7 @@ let styles = `
            role="combobox">
      <!-- options template -->
      <ul *ngIf="!isLoading && optionsOpened && options && options.length > 0 && !firstItemHasChildren"
-          class="ui-select-choices dropdown-menu" role="menu">
+          class="ui-select-choices dropdown-menu" [class.direction-up]="direction === 'up'" role="menu">
         <li *ngFor="let o of options" role="menuitem">
           <div class="ui-select-choices-row"
                [class.active]="isActive(o)"
@@ -249,7 +253,7 @@ let styles = `
       </ul>
   
       <ul *ngIf="!isLoading && optionsOpened && options && options.length > 0 && firstItemHasChildren"
-          class="ui-select-choices dropdown-menu" role="menu">
+          class="ui-select-choices dropdown-menu" [class.direction-up]="direction === 'up'" role="menu">
         <li *ngFor="let c of options; let index=index" role="menuitem">
           <div class="divider dropdown-divider" *ngIf="index > 0"></div>
           <div class="dropdown-header">{{c.text}}</div>
@@ -268,7 +272,7 @@ let styles = `
       </ul>
 
       <ul *ngIf="!isLoading && optionsOpened && options && options.length === 0" 
-          class="ui-select-choices dropdown-menu" role="menu">
+          class="ui-select-choices dropdown-menu" [class.direction-up]="direction === 'up'" role="menu">
         <li role="menuitem">
           <div class="ui-select-choices-row">
             <div class="dropdown-item ui-no-results-container">
@@ -279,7 +283,7 @@ let styles = `
       </ul>
 
       <ul *ngIf="isLoading && optionsOpened" 
-          class="ui-select-choices dropdown-menu" role="menu">
+          class="ui-select-choices dropdown-menu" [class.direction-up]="direction === 'up'" role="menu">
         <li role="menuitem">
           <div class="ui-select-choices-row">
             <div class="dropdown-item ui-loading-container">
@@ -292,6 +296,7 @@ let styles = `
   `
 })
 export class SelectComponent implements OnInit, AfterContentInit {
+  @Input() public direction: 'down' | 'up' = 'down';
   @Input() public allowClear:boolean = false;
   @Input() public placeholder:string = '';
   @Input() public noResultsText: string = 'No results found';

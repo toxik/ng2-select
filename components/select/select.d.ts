@@ -8,6 +8,7 @@ export declare class SelectComponent implements OnInit, AfterContentInit {
     private sanitizer;
     private http;
     private emitter;
+    direction: 'down' | 'up';
     allowClear: boolean;
     placeholder: string;
     noResultsText: string;
