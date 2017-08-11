@@ -494,7 +494,7 @@ var Behavior = (function () {
     };
     Behavior.prototype.ensureHighlightVisible = function (optionsMap) {
         if (optionsMap === void 0) { optionsMap = void 0; }
-        var container = this.actor.element.nativeElement.querySelector('.ui-select-choices-content');
+        var container = this.actor.element.nativeElement.querySelector('.ui-select-choices');
         if (!container) {
             return;
         }
