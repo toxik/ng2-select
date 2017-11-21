@@ -1,9 +1,9 @@
-import { EventEmitter, ElementRef, OnInit, AfterContentInit } from '@angular/core';
+import { AfterContentInit, ElementRef, EventEmitter, OnInit } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { Http, Response } from '@angular/http';
-import { SelectItem } from './select-item';
 import { OptionsBehavior } from './select-interfaces';
 import { SelectEmitterService } from './select-emitter.service';
+import { SelectItem } from './select-item';
 export declare class SelectComponent implements OnInit, AfterContentInit {
     private sanitizer;
     private http;
@@ -61,6 +61,7 @@ export declare class SelectComponent implements OnInit, AfterContentInit {
     doEvent(type: string, value: any): void;
     clickedOutside(): void;
     readonly firstItemHasChildren: boolean;
+    onDragStart(event: MouseEvent): void;
     protected matchClick(e: any): void;
     protected mainClick(event: any): void;
     protected selectActive(value: SelectItem): void;
