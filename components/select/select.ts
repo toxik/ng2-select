@@ -1,17 +1,14 @@
 import {
     AfterContentInit,
-    AfterViewInit,
+    ChangeDetectorRef,
     Component,
     ElementRef,
     EventEmitter,
     Input,
+    OnDestroy,
     OnInit,
     Output
 } from '@angular/core';
-import {
-    DomSanitizer,
-    SafeHtml
-} from '@angular/platform-browser';
 import { Http, Response } from '@angular/http';
 
 import { OptionsBehavior } from './select-interfaces';
@@ -308,7 +305,7 @@ let styles = `
   </div>
   `
 })
-export class SelectComponent implements OnInit, AfterContentInit {
+export class SelectComponent implements OnInit, OnDestroy, AfterContentInit {
     @Input() public direction: 'down' | 'up' = 'down';
     @Input() public allowClear: boolean = false;
     @Input() public placeholder: string = '';
@@ -416,12 +413,13 @@ export class SelectComponent implements OnInit, AfterContentInit {
     private _disabled: boolean = false;
     private _active: Array<SelectItem> = [];
     private _isFetching: boolean = false;
+    private emitterSubscription: any;
 
-    public constructor(element: ElementRef, private sanitizer: DomSanitizer, private http: Http, private emitter: SelectEmitterService) {
+    public constructor(element: ElementRef, private http: Http, private emitter: SelectEmitterService, private cd: ChangeDetectorRef) {
         this.element = element;
         this.clickedOutside = this.clickedOutside.bind(this);
-        this.emitter.notification.subscribe((opened: any) => {
-            if (opened !== this) this.clickedOutside();
+        this.emitterSubscription = this.emitter.notification.subscribe((opened: any) => {
+            if (opened !== this) { this.clickedOutside(); }
         });
     }
 
@@ -444,7 +442,8 @@ export class SelectComponent implements OnInit, AfterContentInit {
             let el: any = this.element.nativeElement
                 .querySelector('div.ui-select-container > input');
             if (!el.value || el.value.length <= 0) {
-                if (this.active.length > 0) {
+                if (this.active.length > 0 &&
+                    (this.active.length !== 1 || this.allowClear)) {
                     this.remove(this.active[this.active.length - 1]);
                 }
                 e.preventDefault();
@@ -459,7 +458,8 @@ export class SelectComponent implements OnInit, AfterContentInit {
         }
         // del
         if (!isUpMode && e.keyCode === 46) {
-            if (this.active.length > 0) {
+            if (this.active.length > 0 &&
+                (this.active.length !== 1 || this.allowClear)) {
                 this.remove(this.active[this.active.length - 1]);
             }
             e.preventDefault();
@@ -522,6 +522,10 @@ export class SelectComponent implements OnInit, AfterContentInit {
             new ChildrenBehavior(this) : new GenericBehavior(this);
     }
 
+    public ngOnDestroy() {
+        this.emitterSubscription.unsubscribe();
+    }
+
     public ngAfterContentInit(): any {
 
         if (this.fetchOnInit) {
@@ -565,6 +569,7 @@ export class SelectComponent implements OnInit, AfterContentInit {
         if (wasPreviouslyOpened) {
             this.triggerFetch();
         }
+        this.cd.detectChanges();
     }
 
     public get firstItemHasChildren(): boolean {
@@ -678,6 +683,7 @@ export class SelectComponent implements OnInit, AfterContentInit {
     private hideOptions(): void {
         this.inputMode = false;
         this.optionsOpened = false;
+        this.cd.detectChanges();
     }
 
     private selectActiveMatch(): void {
