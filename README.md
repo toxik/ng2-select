@@ -59,3 +59,8 @@ Thanks for understanding!
 ### License
 
 The MIT License (see the [LICENSE](https://github.com/valor-software/ng2-select/blob/master/LICENSE) file for the full text)
+
+### Build
+
+`npm run flow.build:prod`
+`npm run prepublish`

@@ -1,6 +1,6 @@
 import {
     AfterContentInit,
-    AfterViewInit,
+    ChangeDetectorRef,
     Component,
     ElementRef,
     EventEmitter,
@@ -8,10 +8,6 @@ import {
     OnInit,
     Output
 } from '@angular/core';
-import {
-    DomSanitizer,
-    SafeHtml
-} from '@angular/platform-browser';
 import { Http, Response } from '@angular/http';
 
 import { OptionsBehavior } from './select-interfaces';
@@ -417,11 +413,11 @@ export class SelectComponent implements OnInit, AfterContentInit {
     private _active: Array<SelectItem> = [];
     private _isFetching: boolean = false;
 
-    public constructor(element: ElementRef, private sanitizer: DomSanitizer, private http: Http, private emitter: SelectEmitterService) {
+    public constructor(element: ElementRef, private http: Http, private emitter: SelectEmitterService, private cd: ChangeDetectorRef) {
         this.element = element;
         this.clickedOutside = this.clickedOutside.bind(this);
         this.emitter.notification.subscribe((opened: any) => {
-            if (opened !== this) this.clickedOutside();
+            if (opened !== this) { this.clickedOutside(); }
         });
     }
 
@@ -678,6 +674,7 @@ export class SelectComponent implements OnInit, AfterContentInit {
     private hideOptions(): void {
         this.inputMode = false;
         this.optionsOpened = false;
+        this.cd.detectChanges();
     }
 
     private selectActiveMatch(): void {

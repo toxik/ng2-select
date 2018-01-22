@@ -1,13 +1,12 @@
-import { AfterContentInit, ElementRef, EventEmitter, OnInit } from '@angular/core';
-import { DomSanitizer } from '@angular/platform-browser';
+import { AfterContentInit, ChangeDetectorRef, ElementRef, EventEmitter, OnInit } from '@angular/core';
 import { Http, Response } from '@angular/http';
 import { OptionsBehavior } from './select-interfaces';
 import { SelectEmitterService } from './select-emitter.service';
 import { SelectItem } from './select-item';
 export declare class SelectComponent implements OnInit, AfterContentInit {
-    private sanitizer;
     private http;
     private emitter;
+    private cd;
     direction: 'down' | 'up';
     allowClear: boolean;
     placeholder: string;
@@ -52,7 +51,7 @@ export declare class SelectComponent implements OnInit, AfterContentInit {
     private _disabled;
     private _active;
     private _isFetching;
-    constructor(element: ElementRef, sanitizer: DomSanitizer, http: Http, emitter: SelectEmitterService);
+    constructor(element: ElementRef, http: Http, emitter: SelectEmitterService, cd: ChangeDetectorRef);
     sanitize(html: string): string;
     inputEvent(e: any, isUpMode?: boolean): void;
     ngOnInit(): any;
