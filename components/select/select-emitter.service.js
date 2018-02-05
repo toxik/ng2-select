@@ -1,6 +1,7 @@
 "use strict";
-var core_1 = require('@angular/core');
-var SelectEmitterService = (function () {
+Object.defineProperty(exports, "__esModule", { value: true });
+var core_1 = require("@angular/core");
+var SelectEmitterService = /** @class */ (function () {
     function SelectEmitterService() {
         this.notification = new core_1.EventEmitter();
     }
@@ -11,9 +12,9 @@ var SelectEmitterService = (function () {
         { type: core_1.Injectable },
     ];
     /** @nocollapse */
-    SelectEmitterService.ctorParameters = [];
+    SelectEmitterService.ctorParameters = function () { return []; };
     SelectEmitterService.propDecorators = {
-        'notification': [{ type: core_1.Output },],
+        "notification": [{ type: core_1.Output },],
     };
     return SelectEmitterService;
 }());

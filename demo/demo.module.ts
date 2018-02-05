@@ -1,16 +1,16 @@
-import { NgModule } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { BrowserModule } from '@angular/platform-browser';
-import { CommonModule } from '@angular/common';
-import { TabsModule, ButtonsModule } from 'ng2-bootstrap/ng2-bootstrap';
-import { HttpModule } from '@angular/http';
+import { ButtonsModule, TabsModule } from 'ng2-bootstrap/ng2-bootstrap';
 
-import { SelectModule } from '../components/select.module';
-import { DemoComponent } from './demo.component';
-import { SelectSectionComponent } from './components/select-section';
+import { BrowserModule } from '@angular/platform-browser';
 import { ChildrenDemoComponent } from './components/select/children-demo';
+import { CommonModule } from '@angular/common';
+import { DemoComponent } from './demo.component';
+import { FormsModule } from '@angular/forms';
+import { HttpClientModule } from '@angular/common/http';
 import { MultipleDemoComponent } from './components/select/multiple-demo';
+import { NgModule } from '@angular/core';
 import { RichDemoComponent } from './components/select/rich-demo';
+import { SelectModule } from '../components/select.module';
+import { SelectSectionComponent } from './components/select-section';
 import { SingleDemoComponent } from './components/select/single-demo';
 
 @NgModule({
@@ -29,7 +29,7 @@ import { SingleDemoComponent } from './components/select/single-demo';
     TabsModule,
     ButtonsModule,
     CommonModule,
-    HttpModule
+    HttpClientModule
   ],
   bootstrap: [DemoComponent]
 })

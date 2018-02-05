@@ -1,11 +1,12 @@
 "use strict";
-var core_1 = require('@angular/core');
-var common_1 = require('@angular/common');
-var select_1 = require('./select/select');
-var select_pipes_1 = require('./select/select-pipes');
-var off_click_1 = require('./select/off-click');
-var select_emitter_service_1 = require('./select/select-emitter.service');
-var SelectModule = (function () {
+Object.defineProperty(exports, "__esModule", { value: true });
+var core_1 = require("@angular/core");
+var common_1 = require("@angular/common");
+var select_1 = require("./select/select");
+var select_pipes_1 = require("./select/select-pipes");
+var off_click_1 = require("./select/off-click");
+var select_emitter_service_1 = require("./select/select-emitter.service");
+var SelectModule = /** @class */ (function () {
     function SelectModule() {
     }
     SelectModule.decorators = [
@@ -17,7 +18,7 @@ var SelectModule = (function () {
                 },] },
     ];
     /** @nocollapse */
-    SelectModule.ctorParameters = [];
+    SelectModule.ctorParameters = function () { return []; };
     return SelectModule;
 }());
 exports.SelectModule = SelectModule;

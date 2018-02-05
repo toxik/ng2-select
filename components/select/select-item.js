@@ -1,5 +1,6 @@
 "use strict";
-var SelectItem = (function () {
+Object.defineProperty(exports, "__esModule", { value: true });
+var SelectItem = /** @class */ (function () {
     function SelectItem(source) {
         var _this = this;
         if (typeof source === 'string') {

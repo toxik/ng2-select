@@ -1,5 +1,5 @@
 import { AfterContentInit, ChangeDetectorRef, ElementRef, EventEmitter, OnDestroy, OnInit } from '@angular/core';
-import { Http, Response } from '@angular/http';
+import { HttpClient } from '@angular/common/http';
 import { OptionsBehavior } from './select-interfaces';
 import { SelectEmitterService } from './select-emitter.service';
 import { SelectItem } from './select-item';
@@ -16,7 +16,7 @@ export declare class SelectComponent implements OnInit, OnDestroy, AfterContentI
     multiple: boolean;
     fetchUrl: string;
     defaultFetchUrl: string;
-    responseMapper: (response: Response) => Array<string | {
+    responseMapper: (response: any) => Array<string | {
         id: any;
         text: any;
     }>;
@@ -52,7 +52,7 @@ export declare class SelectComponent implements OnInit, OnDestroy, AfterContentI
     private _active;
     private _isFetching;
     private emitterSubscription;
-    constructor(element: ElementRef, http: Http, emitter: SelectEmitterService, cd: ChangeDetectorRef);
+    constructor(element: ElementRef, http: HttpClient, emitter: SelectEmitterService, cd: ChangeDetectorRef);
     sanitize(html: string): string;
     inputEvent(e: any, isUpMode?: boolean): void;
     ngOnInit(): any;

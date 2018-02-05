@@ -53,16 +53,16 @@
     "@angular/forms": "~5.0.0"
   },
   "devDependencies": {
-    "@angular/common": "2.0.0",
-    "@angular/compiler": "2.0.0",
-    "@angular/compiler-cli": "0.6.2",
-    "@angular/core": "2.0.0",
-    "@angular/forms": "2.0.0",
-    "@angular/http": "2.0.0",
-    "@angular/platform-browser": "2.0.0",
-    "@angular/platform-browser-dynamic": "2.0.0",
+    "@angular/common": "5.2.3",
+    "@angular/compiler": "5.2.3",
+    "@angular/compiler-cli": "5.2.3",
+    "@angular/core": "5.2.3",
+    "@angular/forms": "5.2.3",
+    "@angular/http": "5.2.3",
+    "@angular/platform-browser": "5.2.3",
+    "@angular/platform-browser-dynamic": "5.2.3",
     "@types/jasmine": "2.2.34",
-    "@types/node": "6.0.39",
+    "@types/node": "6.0.85",
     "@types/webpack": "1.12.34",
     "async": "2.0.1",
     "bootstrap": "3.3.7",
@@ -93,8 +93,8 @@
     "rxjs": "5.0.0-beta.12",
     "systemjs-builder": "0.15.31",
     "tslint-config-valorsoft": "1.1.1",
-    "typescript": "2.0.2",
-    "zone.js": "0.6.25"
+    "typescript": "2.6.2",
+    "zone.js": "0.8.16"
   },
   "contributors": [
     {

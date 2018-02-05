@@ -9,8 +9,8 @@ import {
     OnInit,
     Output
 } from '@angular/core';
-import { Http, Response } from '@angular/http';
 
+import { HttpClient } from '@angular/common/http';
 import { OptionsBehavior } from './select-interfaces';
 import { SelectEmitterService } from './select-emitter.service';
 import { SelectItem } from './select-item';
@@ -315,7 +315,7 @@ export class SelectComponent implements OnInit, OnDestroy, AfterContentInit {
     @Input() public multiple: boolean = false;
     @Input() public fetchUrl: string;
     @Input() public defaultFetchUrl: string;
-    @Input() public responseMapper: (response: Response) => Array<string | { id: any; text: any; }>;
+    @Input() public responseMapper: (response: any) => Array<string | { id: any; text: any; }>;
     @Input() public fetchOnInit: boolean = true;
     @Input() public isLoading: boolean;
     @Input() public loadingText: string = 'Loading...';
@@ -415,7 +415,7 @@ export class SelectComponent implements OnInit, OnDestroy, AfterContentInit {
     private _isFetching: boolean = false;
     private emitterSubscription: any;
 
-    public constructor(element: ElementRef, private http: Http, private emitter: SelectEmitterService, private cd: ChangeDetectorRef) {
+    public constructor(element: ElementRef, private http: HttpClient, private emitter: SelectEmitterService, private cd: ChangeDetectorRef) {
         this.element = element;
         this.clickedOutside = this.clickedOutside.bind(this);
         this.emitterSubscription = this.emitter.notification.subscribe((opened: any) => {
@@ -747,11 +747,11 @@ export class SelectComponent implements OnInit, OnDestroy, AfterContentInit {
         this._isFetching = true;
 
         this.http.get(fetchUrl).subscribe(
-            (response: Response) => {
+            (response) => {
                 try {
-                    this.items = typeof this.responseMapper === 'function'
+                    this.items = (typeof this.responseMapper === 'function'
                         ? this.responseMapper(response)
-                        : response.json();
+                        : response) as any[];
                 } catch (error) {
                     this.doEvent('fetchedError', error);
                     this.isLoading = false;

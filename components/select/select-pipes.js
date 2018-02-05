@@ -1,7 +1,8 @@
 "use strict";
-var core_1 = require('@angular/core');
-var common_1 = require('./common');
-var HighlightPipe = (function () {
+Object.defineProperty(exports, "__esModule", { value: true });
+var core_1 = require("@angular/core");
+var common_1 = require("./common");
+var HighlightPipe = /** @class */ (function () {
     function HighlightPipe() {
     }
     HighlightPipe.prototype.transform = function (value, query) {
@@ -27,7 +28,7 @@ var HighlightPipe = (function () {
         { type: core_1.Pipe, args: [{ name: 'highlight' },] },
     ];
     /** @nocollapse */
-    HighlightPipe.ctorParameters = [];
+    HighlightPipe.ctorParameters = function () { return []; };
     return HighlightPipe;
 }());
 exports.HighlightPipe = HighlightPipe;
